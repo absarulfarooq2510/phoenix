@@ -22,6 +22,24 @@ from engine.correlator import Correlator
 from engine.incident import IncidentManager
 
 # -------------------------------------------------------------------
+# Utility: Safe JSON serializer
+# -------------------------------------------------------------------
+# Purpose:
+# - Keep datetime objects internally for time calculations
+# - Convert them to ISO strings ONLY at output boundaries
+# -------------------------------------------------------------------
+
+def serialize(obj):
+    if isinstance(obj, dict):
+        return {k: serialize(v) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [serialize(i) for i in obj]
+    if isinstance(obj, datetime):
+        return obj.isoformat()
+    return obj
+
+
+# -------------------------------------------------------------------
 # Load topology
 # -------------------------------------------------------------------
 
@@ -87,7 +105,7 @@ while True:
 
                     if incident:
                         print("\n🔥 INCIDENT RAISED 🔥")
-                        print(json.dumps(incident, indent=2))
+                        print(json.dumps(serialize(incident), indent=2))
                         print("\n")
 
     # Sleep to simulate real-time signal flow
