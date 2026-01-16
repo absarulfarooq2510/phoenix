@@ -1,1 +1,33 @@
-{}
+{
+  "nodes": [
+    {
+      "id": "router-edge",
+      "type": "network",
+      "role": "entry-point"
+    },
+    {
+      "id": "switch-aggregation",
+      "type": "network"
+    },
+    {
+      "id": "api-gateway",
+      "type": "application"
+    },
+    {
+      "id": "order-service",
+      "type": "application"
+    },
+    {
+      "id": "payment-service",
+      "type": "application",
+      "critical": true
+      "description": "Business-critical service on the user checkout path; degradation here directly impacts transactions"
+    }
+  ],
+  "edges": [
+    { "from": "router-edge", "to": "switch-aggregation" },
+    { "from": "switch-aggregation", "to": "api-gateway" },
+    { "from": "api-gateway", "to": "order-service" },
+    { "from": "api-gateway", "to": "payment-service" }
+  ]
+}
