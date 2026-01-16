@@ -14,6 +14,8 @@ and autonomously raising incidents when confidence is high.
 
 import time
 import json
+from datetime import datetime
+
 
 from telemetry.signal_generator import generate_signal
 from engine.baseline import BaselineLearner
