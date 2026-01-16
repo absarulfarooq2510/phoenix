@@ -50,7 +50,7 @@ class Correlator:
         """
         Record a deviation for later correlation.
         """
-        deviation["timestamp"] = datetime.utcnow().isoformat()
+        deviation["timestamp"] = datetime.utcnow()
         self.recent_deviations[deviation["component"]].append(deviation)
 
     def correlate(self):
