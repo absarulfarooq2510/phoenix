@@ -66,9 +66,35 @@ def generate_signal(component, metric):
         "error_rate": random.uniform(0, 0.01)
     }
 
-    # Telemetry event structure.
-    # This uniform schema allows Phoenix to treat
-    # network and application signals consistently.
+    # ----------------------------------------------------------------
+    # DEMO DEGRADATION LOGIC (VERY IMPORTANT)
+    #
+    # We deliberately inject abnormal behavior so that:
+    # - Phoenix can learn a baseline
+    # - Deviations occur
+    # - Correlation happens
+    # - An incident is eventually raised
+    #
+    # Without this, Phoenix may NEVER raise an incident
+    # because the system is healthy (which is correct behavior).
+    # ----------------------------------------------------------------
+
+    # Simulate intermittent network degradation at the entry point
+    if component == "router-edge" and metric == "latency_ms":
+        # 10% chance of a major latency spike
+        if random.random() < 0.1:
+            base["latency_ms"] *= 5  # sudden spike (e.g., congestion)
+
+    # Downstream services feel the impact indirectly
+    if component in ["api-gateway", "payment-service"] and metric == "p95_latency_ms":
+        # Smaller probability, but correlated impact
+        if random.random() < 0.08:
+            base["p95_latency_ms"] *= 3
+
+    # ----------------------------------------------------------------
+    # Final telemetry event
+    # ----------------------------------------------------------------
+    
     return {
         "timestamp": datetime.utcnow().isoformat(),
         "component": component,
