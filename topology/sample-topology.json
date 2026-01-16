@@ -3,31 +3,51 @@
     {
       "id": "router-edge",
       "type": "network",
-      "role": "entry-point"
+      "role": "entry-point",
+      "description": "Edge router acting as the primary ingress point into the enterprise network. Discovery starts here."
     },
     {
       "id": "switch-aggregation",
-      "type": "network"
+      "type": "network",
+      "description": "Aggregation switch connecting edge routing to application-facing components."
     },
     {
       "id": "api-gateway",
-      "type": "application"
+      "type": "application",
+      "description": "API gateway routing incoming requests to downstream services."
     },
     {
       "id": "order-service",
-      "type": "application"
+      "type": "application",
+      "description": "Order management service handling non-payment workflows."
     },
     {
       "id": "payment-service",
       "type": "application",
-      "critical": true
-      "description": "Business-critical service on the user checkout path; degradation here directly impacts transactions"
+      "critical": true,
+      "description": "Business-critical service on the checkout path. Any degradation directly impacts transactions."
     }
   ],
   "edges": [
-    { "from": "router-edge", "to": "switch-aggregation" },
-    { "from": "switch-aggregation", "to": "api-gateway" },
-    { "from": "api-gateway", "to": "order-service" },
-    { "from": "api-gateway", "to": "payment-service" }
+    {
+      "from": "router-edge",
+      "to": "switch-aggregation",
+      "description": "Ingress traffic flows from edge router to aggregation switch."
+    },
+    {
+      "from": "switch-aggregation",
+      "to": "api-gateway",
+      "description": "Traffic forwarded from network layer to application gateway."
+    },
+    {
+      "from": "api-gateway",
+      "to": "order-service",
+      "description": "Order-related requests routed to Order Service."
+    },
+    {
+      "from": "api-gateway",
+      "to": "payment-service",
+      "description": "Payment requests routed to Payment Service (critical path)."
+    }
   ]
 }
